@@ -1,23 +1,26 @@
 #!/usr/bin/env python3
-"""Copy the rendered front page to /output/entry.png.
+"""Entry point for the 20 November news-image entry.
 
-The image (entry.png) is the entry: a 1024x1024 front page summing up
-20 November 2026's world news, rendered once by render_20nov.py.
-This program only copies it, so two runs write identical bytes.
+Copies the rendered front page (entry.png, in this repository's root)
+into the output directory so the harness can collect it. No network,
+no extra work: the image is already rendered by render_20nov.py.
 """
-
 import os
 import shutil
 import sys
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+SRC = os.path.join(HERE, "entry.png")
+OUT_DIR = os.environ.get("OUTPUT_DIR", "/output")
+
 
 def main():
-    here = os.path.dirname(os.path.abspath(__file__))
-    src = os.path.join(here, "entry.png")
-    out_dir = "/output"
-    os.makedirs(out_dir, exist_ok=True)
-    dst = os.path.join(out_dir, "entry.png")
-    shutil.copyfile(src, dst)
+    if not os.path.isfile(SRC):
+        print("entry.png not found next to main.py", file=sys.stderr)
+        return 1
+    os.makedirs(OUT_DIR, exist_ok=True)
+    dst = os.path.join(OUT_DIR, "entry.png")
+    shutil.copyfile(SRC, dst)
     print("wrote", dst)
     return 0
 
